@@ -1,240 +1,227 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rekap Keuangan Maabas Mart</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background-color: #f5fef6;
-            color: #333;
-        }
-        header {
-            background-color: #2e7d32;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-        .container {
-            padding: 20px;
-            max-width: 1100px;
-            margin: auto;
-        }
-        .dashboard {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .card {
-            flex: 1;
-            min-width: 250px;
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .card h3 {
-            margin: 0;
-            font-size: 1.2em;
-            color: #2e7d32;
-        }
-        .card p {
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-        form {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        form input, form select, form button {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        form button {
-            background-color: #2e7d32;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        form button:hover {
-            background-color: #1b5e20;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        th, td {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background-color: #2e7d32;
-            color: white;
-        }
-        .summary {
-            background: white;
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        @media (max-width: 600px) {
-            .dashboard {
-                flex-direction: column;
-            }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rekap Keuangan & Barang - Maabas Mart</title>
+  <style>
+    :root{--green:#2e7d32;--green-600:#1b5e20;--bg:#f5fef6}
+    *{box-sizing:border-box}
+    body{font-family:Inter,Arial,system-ui,Roboto,sans-serif;margin:0;background:var(--bg);color:#102;}
+    header{background:var(--green);color:#fff;padding:16px 12px;text-align:center;font-weight:700}
+    .wrap{max-width:1200px;margin:18px auto;padding:0 16px}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+    .card{background:#fff;padding:12px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);text-align:center}
+    .card h4{margin:0;color:var(--green)}.card p{margin:8px 0 0;font-weight:700}
+
+    .panel{background:#fff;padding:12px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);margin-bottom:12px}
+    .flex{display:flex;gap:8px;align-items:center}
+    .col{flex:1}
+    input[type=text], input[type=date], input[type=number], select{width:100%;padding:10px;border:1px solid #e0e0e0;border-radius:8px}
+    button{padding:10px 12px;border-radius:8px;border:0;cursor:pointer}
+    .btn-primary{background:var(--green);color:#fff}
+    .btn-warning{background:#ff9800;color:#fff}
+    .btn-danger{background:#d32f2f;color:#fff}
+
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
+    th{background:var(--green);color:#fff}
+    .aksi-btn{padding:6px 8px;border-radius:6px;border:0;cursor:pointer;margin-right:6px}
+
+    .summary p{margin:6px 0}
+
+    @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)} }
+    @media(max-width:600px){.grid{grid-template-columns:1fr}.flex{flex-direction:column}}
+  </style>
 </head>
 <body>
-    <header>Rekap Keuangan Maabas Mart</header>
-    <div class="container">
-        <div class="dashboard">
-            <div class="card">
-                <h3>Total Pemasukan</h3>
-                <p id="totalPemasukan">Rp 0</p>
-            </div>
-            <div class="card">
-                <h3>Total Pengeluaran</h3>
-                <p id="totalPengeluaran">Rp 0</p>
-            </div>
-            <div class="card">
-                <h3>Saldo Akhir</h3>
-                <p id="saldoAkhir">Rp 0</p>
-            </div>
-        </div>
+  <header>Rekap Keuangan Maabas Mart</header>
+  <div class="wrap">
 
-        <form id="formTransaksi">
-            <h3>Tambah Transaksi</h3>
-            <input type="date" id="tanggal" required>
-            <input type="text" id="keterangan" placeholder="Keterangan" required>
-            <select id="kategori" required>
-                <option value="">Pilih Kategori</option>
-                <option value="pemasukan">Pemasukan</option>
-                <option value="pengeluaran">Pengeluaran</option>
-            </select>
-            <input type="number" id="nominal" placeholder="Nominal" required>
-            <button type="submit">Tambah</button>
-        </form>
-
-        <div style="margin-bottom: 10px;">
-            <input type="date" id="filterTanggal">
-            <select id="filterKategori">
-                <option value="">Semua Kategori</option>
-                <option value="pemasukan">Pemasukan</option>
-                <option value="pengeluaran">Pengeluaran</option>
-            </select>
-            <button onclick="tampilkanData()">Filter</button>
-            <button onclick="resetFilter()">Reset</button>
-        </div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Tanggal</th>
-                    <th>Keterangan</th>
-                    <th>Kategori</th>
-                    <th>Nominal</th>
-                </tr>
-            </thead>
-            <tbody id="tabelTransaksi"></tbody>
-        </table>
-
-        <div class="summary">
-            <h3>Ringkasan Detail</h3>
-            <p id="jumlahTransaksi">Jumlah Transaksi: 0</p>
-            <p id="rataPemasukan">Rata-rata Pemasukan: Rp 0</p>
-            <p id="rataPengeluaran">Rata-rata Pengeluaran: Rp 0</p>
-            <p id="transaksiTerbesar">Transaksi Terbesar: -</p>
-        </div>
+    <!-- Dashboard -->
+    <div class="grid">
+      <div class="card"><h4>Total Pemasukan</h4><p id="totalPemasukan">Rp 0</p></div>
+      <div class="card"><h4>Total Pengeluaran</h4><p id="totalPengeluaran">Rp 0</p></div>
+      <div class="card"><h4>Saldo Akhir</h4><p id="saldoAkhir">Rp 0</p></div>
+      <div class="card"><h4>Laba Bersih</h4><p id="labaBersih">Rp 0</p></div>
     </div>
 
-    <script>
-        let transaksi = JSON.parse(localStorage.getItem('transaksi')) || [];
+    <!-- Form transaksi -->
+    <div class="panel">
+      <h3>Tambah / Edit Transaksi (Mode Scanner Keyboard siap)</h3>
+      <form id="formTransaksi" autocomplete="off">
+        <div class="flex" style="margin-bottom:8px">
+          <input type="date" id="tanggal" class="col" />
+          <input type="text" id="keterangan" class="col" placeholder="Keterangan (scanner fokus ke sini)" />
+        </div>
+        <div class="flex">
+          <select id="kategori" style="width:220px">
+            <option value="">Pilih Kategori</option>
+            <option value="pemasukan">Pemasukan</option>
+            <option value="pengeluaran">Pengeluaran</option>
+          </select>
+          <input type="number" id="nominal" placeholder="Nominal" />
+          <div style="display:flex;gap:8px">
+            <button id="submitBtn" class="btn-primary">Tambah</button>
+            <button type="button" id="cancelEditBtn" class="btn-warning" style="display:none">Batal</button>
+          </div>
+        </div>
+      </form>
+    </div>
 
-        document.getElementById('formTransaksi').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const tanggal = document.getElementById('tanggal').value;
-            const keterangan = document.getElementById('keterangan').value.trim();
-            const kategori = document.getElementById('kategori').value;
-            const nominal = parseFloat(document.getElementById('nominal').value);
-            if (!tanggal || !keterangan || !kategori || isNaN(nominal)) return;
+    <!-- Filter transaksi -->
+    <div class="panel">
+      <div class="flex">
+        <input type="date" id="filterTanggal" class="col" />
+        <select id="filterKategori" style="width:220px"><option value="">Semua Kategori</option><option value="pemasukan">Pemasukan</option><option value="pengeluaran">Pengeluaran</option></select>
+        <button id="btnFilter" class="btn-primary">Filter</button>
+        <button id="btnReset" class="btn-warning">Reset</button>
+      </div>
 
-            transaksi.push({ tanggal, keterangan, kategori, nominal });
-            localStorage.setItem('transaksi', JSON.stringify(transaksi));
+      <table>
+        <thead>
+          <tr><th>Tanggal</th><th>Keterangan</th><th>Kategori</th><th>Nominal</th><th>Aksi</th></tr>
+        </thead>
+        <tbody id="tabelTransaksi"></tbody>
+      </table>
+    </div>
 
-            this.reset();
-            tampilkanData();
-        });
+    <!-- Ringkasan -->
+    <div class="panel summary">
+      <h3>Ringkasan Detail</h3>
+      <p id="jumlahTransaksi">Jumlah Transaksi: 0</p>
+      <p id="rataPemasukan">Rata-rata Pemasukan: Rp 0</p>
+      <p id="rataPengeluaran">Rata-rata Pengeluaran: Rp 0</p>
+      <p id="transaksiTerbesar">Transaksi Terbesar: -</p>
+    </div>
 
-        function tampilkanData() {
-            const filterTanggal = document.getElementById('filterTanggal').value;
-            const filterKategori = document.getElementById('filterKategori').value;
-            const tbody = document.getElementById('tabelTransaksi');
-            tbody.innerHTML = '';
+    <!-- Menu Barang -->
+    <div class="panel">
+      <h3>Menu Barang di Toko</h3>
+      <form id="formBarang" autocomplete="off">
+        <div class="flex" style="margin-bottom:8px">
+          <input type="text" id="namaBarang" placeholder="Nama Barang" />
+          <input type="number" id="hargaModal" placeholder="Harga Modal" />
+        </div>
+        <div class="flex">
+          <input type="number" id="hargaJual" placeholder="Harga Jual" />
+          <div style="display:flex;gap:8px">
+            <button id="submitBarangBtn" class="btn-primary">Tambah Barang</button>
+            <button type="button" id="cancelEditBarangBtn" class="btn-warning" style="display:none">Batal</button>
+          </div>
+        </div>
+      </form>
 
-            let totalPemasukan = 0;
-            let totalPengeluaran = 0;
-            let countPemasukan = 0;
-            let countPengeluaran = 0;
-            let transaksiTerbesar = null;
+      <table>
+        <thead>
+          <tr><th>Nama Barang</th><th>Harga Modal</th><th>Harga Jual</th><th>Keuntungan</th><th>Aksi</th></tr>
+        </thead>
+        <tbody id="tabelBarang"></tbody>
+      </table>
+    </div>
 
-            let filtered = transaksi.filter(t => {
-                return (!filterTanggal || t.tanggal === filterTanggal) &&
-                       (!filterKategori || t.kategori === filterKategori);
-            });
+  </div>
 
-            filtered.forEach(t => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${t.tanggal}</td><td>${t.keterangan}</td><td>${t.kategori}</td><td>Rp ${t.nominal.toLocaleString('id-ID')}</td>`;
-                tbody.appendChild(tr);
+  <script>
+    // Helpers
+    const $ = id => document.getElementById(id);
+    const fmt = n => 'Rp ' + (isFinite(n) ? Number(n).toLocaleString('id-ID') : '0');
 
-                if (t.kategori === 'pemasukan') {
-                    totalPemasukan += t.nominal;
-                    countPemasukan++;
-                } else {
-                    totalPengeluaran += t.nominal;
-                    countPengeluaran++;
-                }
+    // State
+    let transaksi = JSON.parse(localStorage.getItem('transaksi') || '[]');
+    let barang = JSON.parse(localStorage.getItem('barang') || '[]');
+    let editIndex = null; // transaksi edit
+    let editBarangIndex = null;
 
-                if (!transaksiTerbesar || t.nominal > transaksiTerbesar.nominal) {
-                    transaksiTerbesar = t;
-                }
-            });
+    // Elements - transaksi
+    const tanggalEl = $('tanggal');
+    const keteranganEl = $('keterangan');
+    const kategoriEl = $('kategori');
+    const nominalEl = $('nominal');
+    const tabelTransaksi = $('tabelTransaksi');
+    const submitBtn = $('submitBtn');
+    const cancelEditBtn = $('cancelEditBtn');
+    const filterTanggal = $('filterTanggal');
+    const filterKategori = $('filterKategori');
+    const btnFilter = $('btnFilter');
+    const btnReset = $('btnReset');
 
-            document.getElementById('totalPemasukan').innerText = 'Rp ' + totalPemasukan.toLocaleString('id-ID');
-            document.getElementById('totalPengeluaran').innerText = 'Rp ' + totalPengeluaran.toLocaleString('id-ID');
-            document.getElementById('saldoAkhir').innerText = 'Rp ' + (totalPemasukan - totalPengeluaran).toLocaleString('id-ID');
+    // Elements - barang
+    const namaBarangEl = $('namaBarang');
+    const hargaModalEl = $('hargaModal');
+    const hargaJualEl = $('hargaJual');
+    const tabelBarang = $('tabelBarang');
+    const submitBarangBtn = $('submitBarangBtn');
+    const cancelEditBarangBtn = $('cancelEditBarangBtn');
 
-            document.getElementById('jumlahTransaksi').innerText = 'Jumlah Transaksi: ' + filtered.length;
-            document.getElementById('rataPemasukan').innerText = 'Rata-rata Pemasukan: Rp ' + (countPemasukan ? (totalPemasukan / countPemasukan).toLocaleString('id-ID') : 0);
-            document.getElementById('rataPengeluaran').innerText = 'Rata-rata Pengeluaran: Rp ' + (countPengeluaran ? (totalPengeluaran / countPengeluaran).toLocaleString('id-ID') : 0);
-            document.getElementById('transaksiTerbesar').innerText = transaksiTerbesar ? `Transaksi Terbesar: Rp ${transaksiTerbesar.nominal.toLocaleString('id-ID')} (${transaksiTerbesar.keterangan})` : 'Transaksi Terbesar: -';
-        }
+    // init default date
+    function setDefaultDate(){ const today=new Date().toISOString().split('T')[0]; if(!tanggalEl.value) tanggalEl.value = today; }
 
-        function resetFilter() {
-            document.getElementById('filterTanggal').value = '';
-            document.getElementById('filterKategori').value = '';
-            tampilkanData();
-        }
+    // save
+    function saveAll(){ localStorage.setItem('transaksi', JSON.stringify(transaksi)); localStorage.setItem('barang', JSON.stringify(barang)); }
 
-        tampilkanData();
-    </script>
+    // reset forms
+    function resetTransaksiForm(){ editIndex = null; $('formTransaksi').reset(); setDefaultDate(); submitBtn.textContent = 'Tambah'; cancelEditBtn.style.display='none'; keteranganEl.focus(); }
+    function resetBarangForm(){ editBarangIndex = null; $('formBarang').reset(); submitBarangBtn.textContent = 'Tambah Barang'; cancelEditBarangBtn.style.display='none'; namaBarangEl.focus(); }
+
+    // render transaksi
+    function tampilkanData(){
+      const fDate = filterTanggal.value; const fKat = filterKategori.value;
+      tabelTransaksi.innerHTML = '';
+      let totalP=0, totalK=0, cntP=0, cntK=0, terbesar=null, visible=0;
+      for(let i=0;i<transaksi.length;i++){
+        const t = transaksi[i];
+        if((fDate && t.tanggal!==fDate) || (fKat && t.kategori!==fKat)) continue;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${t.tanggal}</td><td>${t.keterangan}</td><td>${t.kategori}</td><td>${fmt(t.nominal)}</td><td><button class="aksi-btn btn-warning" data-i="${i}" data-action="edit">Edit</button><button class="aksi-btn btn-danger" data-i="${i}" data-action="delete">Hapus</button></td>`;
+        tabelTransaksi.appendChild(tr);
+        if(t.kategori==='pemasukan'){ totalP+=Number(t.nominal); cntP++; } else { totalK+=Number(t.nominal); cntK++; }
+        if(!terbesar || Number(t.nominal) > Number(terbesar.nominal)) terbesar = t;
+        visible++;
+      }
+      const saldo = totalP - totalK;
+      $('totalPemasukan').innerText = fmt(totalP);
+      $('totalPengeluaran').innerText = fmt(totalK);
+      $('saldoAkhir').innerText = fmt(saldo);
+      $('labaBersih').innerText = fmt(saldo);
+      $('jumlahTransaksi').innerText = 'Jumlah Transaksi: ' + visible;
+      $('rataPemasukan').innerText = 'Rata-rata Pemasukan: ' + fmt(cntP ? totalP/cntP : 0);
+      $('rataPengeluaran').innerText = 'Rata-rata Pengeluaran: ' + fmt(cntK ? totalK/cntK : 0);
+      $('transaksiTerbesar').innerText = terbesar ? `Transaksi Terbesar: ${fmt(terbesar.nominal)} (${terbesar.keterangan})` : 'Transaksi Terbesar: -';
+    }
+
+    // render barang
+    function tampilkanBarang(){ tabelBarang.innerHTML=''; for(let i=0;i<barang.length;i++){ const b=barang[i]; const keuntungan = Number(b.hargaJual)-Number(b.hargaModal); const tr=document.createElement('tr'); tr.innerHTML = `<td>${b.nama}</td><td>${fmt(b.hargaModal)}</td><td>${fmt(b.hargaJual)}</td><td>${fmt(keuntungan)}</td><td><button class="aksi-btn btn-warning" data-i="${i}" data-action="edit-b">Edit</button><button class="aksi-btn btn-danger" data-i="${i}" data-action="delete-b">Hapus</button></td>`; tabelBarang.appendChild(tr);} }
+
+    // transaksi form submit
+    $('formTransaksi').addEventListener('submit', function(e){ e.preventDefault(); const tanggal = tanggalEl.value || new Date().toISOString().split('T')[0]; const ket = keteranganEl.value.trim(); const kat = kategoriEl.value; const nom = parseFloat(nominalEl.value); if(!ket||!kat||isNaN(nom)){ alert('Lengkapi field transaksi.'); return;} if(editIndex===null){ transaksi.push({tanggal:tanggal,keterangan:ket,kategori:kat,nominal:nom}); } else { transaksi[editIndex]={tanggal:tanggal,keterangan:ket,kategori:kat,nominal:nom}; } saveAll(); resetTransaksiForm(); tampilkanData(); });
+
+    // barang form submit
+    $('formBarang').addEventListener('submit', function(e){ e.preventDefault(); const nama = namaBarangEl.value.trim(); const hm = parseFloat(hargaModalEl.value); const hj = parseFloat(hargaJualEl.value); if(!nama||isNaN(hm)||isNaN(hj)){ alert('Lengkapi field barang.'); return;} if(editBarangIndex===null){ barang.push({nama:nama,hargaModal:hm,hargaJual:hj}); } else { barang[editBarangIndex]={nama:nama,hargaModal:hm,hargaJual:hj}; } saveAll(); resetBarangForm(); tampilkanBarang(); });
+
+    // delegated handlers for transaksi table
+    tabelTransaksi.addEventListener('click', function(e){ const btn = e.target.closest('button'); if(!btn) return; const i = Number(btn.dataset.i); const action = btn.dataset.action; if(action==='edit'){ startEditTransaksi(i); } else if(action==='delete'){ if(confirm('Hapus transaksi ini?')){ transaksi.splice(i,1); saveAll(); tampilkanData(); } } });
+
+    function startEditTransaksi(i){ const t = transaksi[i]; if(!t) return; editIndex = i; tanggalEl.value = t.tanggal; keteranganEl.value = t.keterangan; kategoriEl.value = t.kategori; nominalEl.value = t.nominal; submitBtn.textContent = 'Simpan'; cancelEditBtn.style.display='inline-block'; keteranganEl.focus(); }
+    cancelEditBtn.addEventListener('click', resetTransaksiForm);
+
+    // delegated handlers for barang table
+    tabelBarang.addEventListener('click', function(e){ const btn = e.target.closest('button'); if(!btn) return; const i = Number(btn.dataset.i); const action = btn.dataset.action; if(action==='edit-b'){ startEditBarang(i); } else if(action==='delete-b'){ if(confirm('Hapus barang ini?')){ barang.splice(i,1); saveAll(); tampilkanBarang(); } } });
+
+    function startEditBarang(i){ const b = barang[i]; if(!b) return; editBarangIndex = i; namaBarangEl.value = b.nama; hargaModalEl.value = b.hargaModal; hargaJualEl.value = b.hargaJual; submitBarangBtn.textContent = 'Simpan Perubahan'; cancelEditBarangBtn.style.display='inline-block'; namaBarangEl.focus(); }
+    cancelEditBarangBtn.addEventListener('click', resetBarangForm);
+
+    // filters
+    btnFilter.addEventListener('click', tampilkanData); btnReset.addEventListener('click', function(){ filterTanggal.value=''; filterKategori.value=''; tampilkanData(); });
+
+    // keyboard scanner support: focus keterangan, Enter to advance
+    const inputsOrder = [tanggalEl, keteranganEl, kategoriEl, nominalEl];
+    inputsOrder.forEach((el, idx, arr)=>{ el.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); const next = arr[idx+1]; if(next) next.focus(); else submitBtn.click(); } }); });
+
+    // initial
+    setDefaultDate(); resetTransaksiForm(); resetBarangForm(); tampilkanData(); tampilkanBarang();
+
+  </script>
 </body>
 </html>
+
